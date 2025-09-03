@@ -1,7 +1,4 @@
-import multiprocessing
-from multiprocessing import Queue
-
-def iterate(file_path, queue):
+def iterate(file_path):
     cities = {}
 
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -17,10 +14,7 @@ def iterate(file_path, queue):
                 stats['max'] = max(stats['max'], temp)
                 stats['sum'] += temp
                 stats['count'] += 1
-
-
-    return cities
-
+        return cities
 
 def display(cities):
     for city in sorted(cities):
@@ -30,15 +24,8 @@ def display(cities):
 
 
 def main():
-    queue = Queue()
-    p1 = multiprocessing.Process(target=iterate, args='measurements_1m.txt')
-    p2 = multiprocessing.Process(target=display)
-   
-    p1.start()
-    p1.join()
-    p2.start()
-    p2.join()
-
+    cities = iterate('measurements_1m.txt')
+    display(cities)
 
 if __name__ == '__main__':
     main()
