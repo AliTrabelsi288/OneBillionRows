@@ -1,6 +1,0 @@
-Saint Petersburg;7.5
-Saint Petersburg;6.5
-Saint Petersburg;8.5
-Tunis;12
-Tunis;25
-Tunis;30

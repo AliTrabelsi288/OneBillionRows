@@ -1,25 +1,44 @@
-one_million = open('measurements_1m.txt', 'r')
+import multiprocessing
+from multiprocessing import Queue
 
-cities = {}
+def iterate(file_path, queue):
+    cities = {}
 
-for row in one_million:
-    entry = row.strip().split(";")
-    city = entry[0]
-    temp = float(entry[1])
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for row in file:
+            city, temp = row.strip().split(";")
+            temp = float(temp)
 
-    if city in cities:
-        if cities[city]['min'] > temp:
-            max = cities[city]['max']
-            cities.update({city : {'min': temp, 'max': max}})
+            if city not in cities:
+                cities[city] = {'min': temp, 'max': temp, 'sum': temp, 'count': 1}
+            else:
+                stats = cities[city]
+                stats['min'] = min(stats['min'], temp)
+                stats['max'] = max(stats['max'], temp)
+                stats['sum'] += temp
+                stats['count'] += 1
 
-        if cities[city]['max'] < temp:
-            min = cities[city]['min']
-            cities.update({city : {'min': min, 'max': temp}})
 
-        
-    else:
-        cities.update({city : {'min': temp, 'max': temp}})
+    return cities
 
-for key, value in cities.items():
-    print(key, value)
 
+def display(cities):
+    for city in sorted(cities):
+        stats = cities[city]
+        avg = int(stats['sum'] / stats['count'])
+        print(f"{city}={stats['min']}/{avg}/{stats['max']}")
+
+
+def main():
+    queue = Queue()
+    p1 = multiprocessing.Process(target=iterate, args='measurements_1m.txt')
+    p2 = multiprocessing.Process(target=display)
+   
+    p1.start()
+    p1.join()
+    p2.start()
+    p2.join()
+
+
+if __name__ == '__main__':
+    main()
