@@ -78,4 +78,4 @@ def main(file_path, num_workers=None):
     write_results(final_stats, output_path="results.txt")
 
 if __name__ == "__main__":
-    main("measurements_10m.txt") 
+    main("measurements_1m.txt") 
